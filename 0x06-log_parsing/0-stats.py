@@ -7,23 +7,58 @@ Input format:
 
 After every 10 lines and/or a keyboard interruption (CTRL + C),
 print these statistics from the beginning:
-
-    Total file size: File size: <total size>
-    where <total size> is the sum of all previous <file size>
-    Number of lines by status code:
-        possible status code: 200, 301, 400, 401, 403, 404, 405 and 500
-
-    if a status code doesn’t appear or is not an integer,
-        don’t print anything for this status code
-    format: <status code>: <number>
-    status codes should be printed in ascending order
 """
 
-import sys.stdin as stdin
+from sys import stdin
+
+
+def main():
+    """
+    Print the statistcs
+    """
+
+    size = 0
+    count = 0
+    status_code = {
+        '200': 0,
+        '301': 0,
+        '400': 0,
+        '401': 0,
+        '403': 0,
+        '404': 0,
+        '405': 0,
+        '500': 0
+    }
+
+    try:
+
+        for line in stdin:
+
+            args = line.split()
+            if len(args) > 2:
+
+                if args[-2] in status_code:
+                    status_code[args[-2]] += 1
+
+                size += int(args[-1])
+
+            count += 1
+
+            if not count % 10:
+                print('File size: {}'.format(size))
+
+                for key, value in sorted(status_code.items()):
+                    if value:
+                        print('{}: {}'.format(key, value))
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print('File size: {}'.format(size))
+
+        for key, value in sorted(status_code.items()):
+            if value:
+                print('{}: {}'.format(key, value))
 
 
 if __name__ == '__main__':
-
-    for line in stdin:
-        args = line.split()
-        print(args)
+    main()
